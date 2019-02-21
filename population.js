@@ -27,10 +27,12 @@ class Population {
     }
   }
 
-  checkBounds(block) {
+  checkBounds(blocks) {
     for (let s of this.pop) {
-      if (block.checkInter(s)) {
-        s.dead = true;
+      for (let block of blocks) {
+        if (block.checkInter(s)) {
+          s.dead = true;
+        }
       }
     }
   }
