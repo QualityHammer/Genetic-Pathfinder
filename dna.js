@@ -23,7 +23,7 @@ class DNA {
   mutate() {
     for (var i = 0; i < this.len; i++) {
       if (random(1) < this.mRate) {
-        this.genes[i] = p5.Vector.random2D();
+        this.genes[i].set(random(-1, 1));
       }
     }
   }

@@ -67,7 +67,11 @@ class Searcher {
   // displays dot
   show() {
     stroke(0);
-    fill(255);
+    if (this.dead) {
+      fill(0, 255, 255);
+    } else {
+      fill(255);
+    }
     circle(this.pos.x, this.pos.y, 4);
   }
 }

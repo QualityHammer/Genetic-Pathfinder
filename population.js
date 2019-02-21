@@ -6,7 +6,7 @@ class Population {
     // mutation rate
     this.mRate = 0.01;
     // population size
-    this.size = 500;
+    this.size = 1000;
     this.pop = [];
     this.pool = [];
     // starting vector
@@ -30,18 +30,25 @@ class Population {
   }
 
   // checks every member of the population for blockade intersections
-  checkBounds(blocks) {
+  checkBounds(blocks, swings) {
     for (let s of this.pop) {
       for (let block of blocks) {
         if (block.checkInter(s)) {
           s.dead = true;
+          s.setStep(this.step);
+        }
+      }
+      for (let swing of swings) {
+        if (swing.checkInter(s)) {
+          s.dead = true;
+          s.setStep(this.step);
         }
       }
     }
   }
 
   // moves the whole population
-  moveAll() {
+  moveAll(swings) {
     if (this.step < this.maxStep) {
       for (let s of this.pop) {
         s.move(this.step, this.target);
@@ -52,6 +59,9 @@ class Population {
       this.calcFitness();
       this.selection();
       this.newGeneration();
+      for (let swing of swings) {
+        swing.reset();
+      }
     }
   }
 
@@ -65,9 +75,9 @@ class Population {
       var index = floor(random(this.pool.length));
       // cretaes a clone and mutates it
       let brain = this.pool[index].brain.clone();
-      brain.mutate();
       let s = new Searcher(this.start, this.maxStep);
       s.setBrain(brain);
+      s.brain.mutate();
       this.pop[i] = s;
     }
     this.generations += 1;
