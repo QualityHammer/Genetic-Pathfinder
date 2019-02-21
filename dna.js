@@ -12,6 +12,13 @@ class DNA {
     return n;
   }
 
+  // injects genes
+  inject(genes) {
+    for (var i = 0; i < genes.length; i++) {
+      this.genes[i] = genes[i];
+    }
+  }
+
   // mutates genes based on mutation rate
   mutate() {
     for (var i = 0; i < this.len; i++) {
