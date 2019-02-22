@@ -1,11 +1,12 @@
-var maxStep = 200;
+var stepSize = 10;
+var incrementFreq = 3;
 
 class Population {
   constructor(start, target) {
     // mutation rate
     this.mRate = 0.01;
     // population size
-    this.size = 500;
+    this.size = 1000;
     this.pop = [];
     this.pool = [];
     // starting vector
@@ -18,6 +19,7 @@ class Population {
 
     // current step
     this.step = 0;
+    this.maxStep = 50;
   }
 
   // calculates fitness for all DNA in population
@@ -27,19 +29,27 @@ class Population {
     }
   }
 
-  checkBounds(blocks) {
+  // checks every member of the population for blockade intersections
+  checkBounds(blocks, swings) {
     for (let s of this.pop) {
       for (let block of blocks) {
         if (block.checkInter(s)) {
           s.dead = true;
+          s.setStep(this.step);
+        }
+      }
+      for (let swing of swings) {
+        if (swing.checkInter(s)) {
+          s.dead = true;
+          s.setStep(this.step);
         }
       }
     }
   }
 
   // moves the whole population
-  moveAll() {
-    if (this.step < maxStep) {
+  moveAll(swings) {
+    if (this.step < this.maxStep) {
       for (let s of this.pop) {
         s.move(this.step, this.target);
       }
@@ -49,19 +59,25 @@ class Population {
       this.calcFitness();
       this.selection();
       this.newGeneration();
+      for (let swing of swings) {
+        swing.reset();
+      }
     }
   }
 
   // creates a new generation using cloning and mutation
   newGeneration() {
+    if (this.generations % incrementFreq == 0) {
+      this.maxStep += stepSize;
+    }
     for (var i = 0; i < this.size; i++) {
       // gets a random DNA from the pool
       var index = floor(random(this.pool.length));
       // cretaes a clone and mutates it
       let brain = this.pool[index].brain.clone();
-      brain.mutate();
-      let s = new Searcher(this.start, maxStep);
+      let s = new Searcher(this.start, this.maxStep);
       s.setBrain(brain);
+      s.brain.mutate();
       this.pop[i] = s;
     }
     this.generations += 1;
@@ -70,7 +86,7 @@ class Population {
   // Creates a brand new randomized population
   newPop() {
     for (var i = 0; i < this.size; i++) {
-      let n = new Searcher(this.start, maxStep);
+      let n = new Searcher(this.start, this.maxStep);
       n.randomBrain(this.mRate);
       this.pop.push(n);
     }
