@@ -1,4 +1,4 @@
-let population, target;
+let population, target, start;
 let blocks = [];
 let swings = [];
 var x1 = null;
@@ -34,7 +34,7 @@ function setup() {
   background(51);
   stroke(0);
 
-  let start = createVector(100, height - 100);
+  start = createVector(width / 2, height - 100);
   target = createVector(width / 2, height / 8);
   population = new Population(start, target);
   population.newPop();
@@ -57,6 +57,8 @@ function draw() {
   stroke(0);
   fill(255, 0, 255);
   circle(target.x, target.y, 5);
+  fill(1);
+  circle(start.x, start.y, 3);
   if (go) {
     population.moveAll(swings);
     population.showAll();
