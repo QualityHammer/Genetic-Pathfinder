@@ -1,12 +1,18 @@
+let maxSpeed = 5;
+
 class Searcher {
   constructor(pos, len) {
+    // position and physics vectors
     this.pos = createVector(pos.x, pos.y);
     this.acc = createVector(0, 0);
     this.vel = createVector(0, 0);
+    // DNA
     this.brain = null;
+    // frame lifespan
     this.len = len;
     this.fitness = 0;
 
+    // flags
     this.dead = false;
     this.goal = false;
     this.step = null;
@@ -32,7 +38,7 @@ class Searcher {
     if (!this.dead && !this.goal) {
       this.acc = this.brain.genes[step];
       this.vel.add(this.acc);
-      this.vel.limit(5);
+      this.vel.limit(maxSpeed);
       this.pos.add(this.vel);
       if (this.pos.x > width || this.pos.x < 0 || this.pos.y > height || this.pos.y < 0) {
         this.dead = true;
@@ -60,6 +66,7 @@ class Searcher {
     }
   }
 
+  // sets the step count
   setStep(step) {
     this.step = step;
   }
