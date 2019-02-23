@@ -23,12 +23,12 @@ class Searcher {
     if (!this.step) {
       this.step = maxStep;
     }
-    let fit = 1 / Math.pow(this.pos.dist(target), 2);
+    let fit = 1 / Math.pow(this.pos.dist(target.pos), 2);
     if (this.dead) {
       fit /= 1000;
     }
     if (this.goal) {
-      fit = 1 / Math.pow(this.step, 2);
+      fit = Math.pow(1000 / this.step, 2);
     }
     return fit;
   }
@@ -40,11 +40,13 @@ class Searcher {
       this.vel.add(this.acc);
       this.vel.limit(maxSpeed);
       this.pos.add(this.vel);
+      // canvas bounds
       if (this.pos.x > width || this.pos.x < 0 || this.pos.y > height || this.pos.y < 0) {
         this.dead = true;
         this.setStep(step);
       }
-      if (floor(this.pos.x) == floor(target.x) && floor(this.pos.y) == floor(target.y)) {
+      // target
+      if (target.checkInter(this)) {
         this.goal = true;
         this.setStep(step);
       }
@@ -76,6 +78,8 @@ class Searcher {
     stroke(0);
     if (this.dead) {
       fill(0, 255, 255);
+    } else if(this.goal) {
+      fill(0, 255, 0);
     } else {
       fill(255);
     }

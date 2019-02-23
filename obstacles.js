@@ -1,14 +1,14 @@
+const obstSpeed = 15;
+
 class Swinger {
-  constructor(x, y, r) {
+  constructor(x, y, r, direct) {
     // position and velocity vectors
     this.pos = createVector(x, y);
-    this.vel = createVector(5, 5);
-    // randomize vectors
-    if (random(1) < 0.5) {
-      this.vel.set(-this.vel.x, this.vel.y);
-    }
-    if (random(1) < 0.5) {
-      this.vel.set(this.vel.x, -this.vel.y);
+    this.vel = direct.copy();
+    // limit speed
+    if (abs(this.vel.x) > obstSpeed || abs(this.vel.y) > obstSpeed) {
+      let mg = max(abs(this.vel.x), abs(this.vel.y)) / obstSpeed;
+      this.vel.div(mg);
     }
     // starting vectors
     this.startPos =this.pos.copy() ;

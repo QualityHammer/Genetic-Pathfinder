@@ -3,6 +3,8 @@ let blocks = [];
 let swings = [];
 var x1 = null;
 var y1 = null;
+var rd = null;
+var ballDirect = null;
 var genP, stepP, startB, changeB, muteI, popP, popBup, popBdown;
 var obst = 'Wall';
 var go = false;
@@ -34,22 +36,33 @@ function mutationChange() {
 }
 
 
-// is called when some buttons are pressed to avoid random object creation
-function blankSelect() {
-  x1 = null;
-  y1 = null;
-}
-
-
 // changes the created obstacle
 function changeObstacle() {
   if (obst == 'Wall') {
     obst = 'Swing';
   } else if (obst == 'Swing') {
+    obst = 'Target';
+  } else if (obst == 'Target') {
     obst = 'Wall';
   }
   changeB.html(obst);
 }
+
+
+// draw an arrow for a vector at a given base position
+// function drawArrow(base, vec) {
+//   push();
+//   stroke(0, 200, 0);
+//   strokeWeight(6);
+//   fill(0, 200, 0);
+//   translate(base.x, base.y);
+//   line(0, 0, vec.x - base.x, vec.y - base.y);
+//   let arrowSize = 20;
+//   translate(vec.x - base.x, vec.y - base.y);
+//   rotate(vec.heading());
+//   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
+//   pop();
+// }
 
 
 function setup() {
@@ -59,7 +72,7 @@ function setup() {
 
   // start and target vectors
   start = createVector(width / 2, height - 100);
-  target = createVector(width / 2, height / 8);
+  target = new Target(width / 2, height / 8);
   // population creation
   population = new Population(start, target);
 
@@ -70,18 +83,15 @@ function setup() {
   // change obstacle button
   changeB = createButton(obst);
   changeB.mousePressed(changeObstacle);
-  changeB.mouseReleased(blankSelect);
   // population size control
   popP = createP('Population size: ');
   popBdown = createButton('-');
   popBdown.mousePressed(lowerPop);
-  popBdown.mouseReleased(blankSelect);
   popBup = createButton('+');
   popBup.mousePressed(raisePop);
-  popBup.mouseReleased(blankSelect);
   // mutation input
   muteP = createP('Mutation rate: ')
-  muteI = createInput(0.01);
+  muteI = createInput('0.01');
   muteI.parent(muteP);
   muteI.input(mutationChange);
   createP('');
@@ -95,8 +105,7 @@ function draw() {
   stroke(0);
   strokeWeight(1);
   // target
-  fill(255, 255, 0);
-  circle(target.x, target.y, 5);
+  target.show();
   // start
   fill(1);
   circle(start.x, start.y, 3);
@@ -126,8 +135,18 @@ function draw() {
       rect(x1, y1, mouseX, mouseY);
     } else if (obst === 'Swing') {
       strokeWeight(3);
+      if (rd) {
+        stroke(0, 200, 0);
+        strokeWeight(6);
+        line(x1, y1, mouseX, mouseY);
+      }
       stroke(1);
-      circle(x1, y1, dist(x1, y1, mouseX, mouseY));
+      fill(100, 255, 100);
+      if (rd) {
+        circle(x1, y1, rd)
+      } else {
+        circle(x1, y1, dist(x1, y1, mouseX, mouseY));
+      }
     }
   }
   // update info
@@ -141,23 +160,35 @@ function draw() {
 }
 
 function mousePressed() {
-  if (!x1 && !y1 && !go) {
-    // first point
-    x1 = mouseX;
-    y1 = mouseY;
-  } else if (!go) {
-    // object creation
-    var rx1 = x1;
-    var ry1 = y1;
-    var rx2 = mouseX;
-    var ry2 = mouseY;
-    if (obst === 'Wall') {
-      blocks.push(new Rectangle(rx1, ry1, rx2, ry2));
-    } else if (obst === 'Swing') {
-      swings.push(new Swinger(rx1, ry1, dist(rx1, ry1, rx2, ry2)));
+  if (mouseX < width && mouseX > 0 && mouseY < height && mouseY > 0) {
+    if (!x1 && !y1 && !go) {
+      // first point
+      if (obst == 'Target') {
+        target.move(mouseX, mouseY);
+      } else {
+        x1 = mouseX;
+        y1 = mouseY;
+      }
+    } else if (!go) {
+      // object creation
+      if (obst === 'Wall') {
+        blocks.push(new Rectangle(x1, y1, mouseX, mouseY));
+        // reset
+        x1 = null;
+        y1 = null;
+      } else if (obst === 'Swing') {
+        if (rd) {
+          ballDirect = createVector(mouseX - x1, mouseY - y1);
+          swings.push(new Swinger(x1, y1, rd, ballDirect));
+          // reset
+          x1 = null;
+          y1 = null;
+          rd = null;
+          ballDirect = null;
+        } else {
+          rd = dist(x1, y1, mouseX, mouseY);
+        }
+      }
     }
-    // reset
-    x1 = null;
-    y1 = null;
   }
 }

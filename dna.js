@@ -15,7 +15,7 @@ class DNA {
   // injects genes
   inject(genes) {
     for (var i = 0; i < genes.length; i++) {
-      this.genes[i] = genes[i];
+      this.genes[i] = genes[i].copy();
     }
   }
 
@@ -23,7 +23,7 @@ class DNA {
   mutate() {
     for (var i = 0; i < this.len; i++) {
       if (random(1) < this.mRate) {
-        this.genes[i].set(random(-1, 1));
+        this.genes[i].set(random(-1, 1), random(-1, 1));
       }
     }
   }
