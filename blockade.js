@@ -18,7 +18,7 @@ class Rectangle {
 
   // returns true if a dot is intersecting with this
   checkInter(s) {
-    return (s.pos.x < this.right && s.pos.x > this.left && s.pos.y > this.top && s.pos.y < this.bottom);
+    return ((s.pos.x < this.right && s.pos.x > this.left && s.pos.y > this.top && s.pos.y < this.bottom) && !s.goal);
   }
 
   show() {

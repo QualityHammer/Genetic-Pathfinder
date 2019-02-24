@@ -30,7 +30,19 @@ class Population {
       s.fitness = s.getFitness(this.target, this.maxStep);
     }
     this.checkGoal();
-    console.log(this.getBest().fitness);
+    var best = this.getBest();
+    console.log(best.fitness, best.step);
+  }
+
+  // checks if the whole population is dead
+  checkAllDead() {
+    var amount = 0;
+    for (let s of this.pop) {
+      if(s.dead) {
+        amount += 1;
+      }
+    }
+    return (amount == this.size);
   }
 
   // checks every member of the population for blockade intersections
@@ -97,7 +109,12 @@ class Population {
     if (this.generations % incrementFreq == 0 && !this.limitSteps) {
       this.maxStep += stepSize;
     }
-    for (var i = 0; i < this.size; i++) {
+    let best = new Searcher(this.start, this.maxStep);
+    best.best = true;
+    let brain = this.getBest().brain;
+    best.setBrain(brain, this.mRate);
+    this.pop[this.size - 1] = best;
+    for (var i = 0; i < this.size - 1; i++) {
       // gets a random DNA from the pool
       var index = floor(random(this.pool.length));
       // cretaes a clone and mutates it

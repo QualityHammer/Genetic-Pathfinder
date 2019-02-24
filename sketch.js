@@ -43,26 +43,12 @@ function changeObstacle() {
   } else if (obst == 'Swing') {
     obst = 'Target';
   } else if (obst == 'Target') {
+    obst = 'Start Pos';
+  } else if(obst == 'Start Pos') {
     obst = 'Wall';
   }
   changeB.html(obst);
 }
-
-
-// draw an arrow for a vector at a given base position
-// function drawArrow(base, vec) {
-//   push();
-//   stroke(0, 200, 0);
-//   strokeWeight(6);
-//   fill(0, 200, 0);
-//   translate(base.x, base.y);
-//   line(0, 0, vec.x - base.x, vec.y - base.y);
-//   let arrowSize = 20;
-//   translate(vec.x - base.x, vec.y - base.y);
-//   rotate(vec.heading());
-//   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
-//   pop();
-// }
 
 
 function setup() {
@@ -165,6 +151,8 @@ function mousePressed() {
       // first point
       if (obst == 'Target') {
         target.move(mouseX, mouseY);
+      } else if(obst == 'Start Pos') {
+        start.set(mouseX, mouseY);
       } else {
         x1 = mouseX;
         y1 = mouseY;
@@ -178,7 +166,7 @@ function mousePressed() {
         y1 = null;
       } else if (obst === 'Swing') {
         if (rd) {
-          ballDirect = createVector(mouseX - x1, mouseY - y1);
+          ballDirect = createVector((mouseX - x1) / 10, (mouseY - y1) / 10);
           swings.push(new Swinger(x1, y1, rd, ballDirect));
           // reset
           x1 = null;

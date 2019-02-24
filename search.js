@@ -16,6 +16,7 @@ class Searcher {
     this.dead = false;
     this.goal = false;
     this.step = null;
+    this.best = false;
   }
 
   // returns the fitness value of the genes
@@ -26,6 +27,7 @@ class Searcher {
     let fit = 1 / Math.pow(this.pos.dist(target.pos), 2);
     if (this.dead) {
       fit /= 1000;
+      fit *= this.step;
     }
     if (this.goal) {
       fit = Math.pow(1000 / this.step, 2);
@@ -77,9 +79,11 @@ class Searcher {
   show() {
     stroke(0);
     if (this.dead) {
-      fill(0, 255, 255);
-    } else if(this.goal) {
+      fill(100, 0, 0);
+    } else if(this.best) {
       fill(0, 255, 0);
+    } else if(this.goal) {
+      fill(255, 0, 255);
     } else {
       fill(255);
     }

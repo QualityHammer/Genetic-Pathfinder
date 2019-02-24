@@ -1,4 +1,4 @@
-const obstSpeed = 15;
+const obstSpeed = 10;
 
 class Swinger {
   constructor(x, y, r, direct) {
@@ -19,7 +19,7 @@ class Swinger {
 
   // returns true if a dot is intersecting with this
   checkInter(s) {
-    return (this.pos.dist(s.pos) < this.r);
+    return ((this.pos.dist(s.pos) < this.r) && !s.goal);
   }
 
   // resets the position and velocity after every generation
