@@ -1,4 +1,4 @@
-var stepSize = 10;
+var stepSize = 20;
 var incrementFreq = 3;
 
 class Population {
@@ -20,24 +20,42 @@ class Population {
     // current step
     this.step = 0;
     this.maxStep = 50;
+    // flag
+    this.limitSteps = false;
   }
 
   // calculates fitness for all DNA in population
   calcFitness() {
     for (let s of this.pop) {
-      s.fitness = s.getFitness(this.target);
+      s.fitness = s.getFitness(this.target, this.maxStep);
     }
+    this.checkGoal();
+    var best = this.getBest();
+    console.log(best.fitness, best.step);
+  }
+
+  // checks if the whole population is dead
+  checkAllDead() {
+    var amount = 0;
+    for (let s of this.pop) {
+      if(s.dead) {
+        amount += 1;
+      }
+    }
+    return (amount == this.size);
   }
 
   // checks every member of the population for blockade intersections
   checkBounds(blocks, swings) {
     for (let s of this.pop) {
+      // check wall intersections
       for (let block of blocks) {
         if (block.checkInter(s)) {
           s.dead = true;
           s.setStep(this.step);
         }
       }
+      // check swing intersections
       for (let swing of swings) {
         if (swing.checkInter(s)) {
           s.dead = true;
@@ -45,6 +63,29 @@ class Population {
         }
       }
     }
+  }
+
+  // limits the lifespan if any has reached the goal
+  checkGoal() {
+    for (let s of this.pop) {
+      if (s.goal && s.step < this.maxStep + 1) {
+        this.maxStep = s.step + 1;
+        this.limitSteps = true;
+      }
+    }
+  }
+
+  // gets best fitness value and returns the best searcher
+  getBest() {
+    var top = 0;
+    let best;
+    for (let s of this.pop) {
+      if (s.fitness > top) {
+        top = s.fitness;
+        best = s;
+      }
+    }
+    return best;
   }
 
   // moves the whole population
@@ -55,10 +96,12 @@ class Population {
       }
       this.step += 1;
     } else {
+      // if the lifespan has ended, make a new generation
       this.step = 0;
       this.calcFitness();
       this.selection();
       this.newGeneration();
+      // reset swings position and velocity
       for (let swing of swings) {
         swing.reset();
       }
@@ -67,16 +110,24 @@ class Population {
 
   // creates a new generation using cloning and mutation
   newGeneration() {
-    if (this.generations % incrementFreq == 0) {
+    // increases the step size every certain amount of genertaions
+    if (this.generations % incrementFreq == 0 && !this.limitSteps) {
       this.maxStep += stepSize;
     }
-    for (var i = 0; i < this.size; i++) {
+    // clones the best one into the new generation
+    let best = new Searcher(this.start, this.maxStep);
+    best.best = true;
+    let brain = this.getBest().brain;
+    best.setBrain(brain, this.mRate);
+    this.pop[this.size - 1] = best;
+    // generation creation
+    for (var i = 0; i < this.size - 1; i++) {
       // gets a random DNA from the pool
       var index = floor(random(this.pool.length));
       // cretaes a clone and mutates it
       let brain = this.pool[index].brain.clone();
       let s = new Searcher(this.start, this.maxStep);
-      s.setBrain(brain);
+      s.setBrain(brain, this.mRate);
       s.brain.mutate();
       this.pop[i] = s;
     }
@@ -105,16 +156,11 @@ class Population {
     // clears pool
     this.pool.length = 0;
     // gets the max fitness value
-    var maxFit = 0;
-    for (let s of this.pop) {
-      if (s.fitness > maxFit) {
-        maxFit = s.fitness;
-      }
-    }
+    var maxFit = this.getBest().fitness;
     // normalize fitness and add to pool
     for (let s of this.pop) {
       var fit = s.fitness / maxFit;
-      var chance = floor(Math.pow(fit * 10, 2));
+      var chance = floor(Math.pow(fit * 5, 2));
       for (var i = 0; i < chance; i++) {
         this.pool.push(s);
       }
