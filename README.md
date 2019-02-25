@@ -28,4 +28,4 @@ Before you initialize the population, you can control the population size.
 Also, at any point during the population's movements, you can change the mutation rate.  
 > The mutation rate needs to be a decimal number less than 0. (representing the percent chance)  
   
-> The current generation and the frame lifespan of the population are shown below.
+> The current generation and the frame lifespan of the population are shown below everything else.
