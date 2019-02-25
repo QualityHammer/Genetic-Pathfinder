@@ -37,7 +37,9 @@ class Searcher {
 
   // moves the searcher one step
   move(step, target) {
+    // only moves if it isn't dead or at the goal
     if (!this.dead && !this.goal) {
+      // physics
       this.acc = this.brain.genes[step];
       this.vel.add(this.acc);
       this.vel.limit(maxSpeed);

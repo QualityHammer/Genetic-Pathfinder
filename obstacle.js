@@ -28,6 +28,7 @@ class Swinger {
     this.vel.set(this.startVel);
   }
 
+  // shows ball
   show() {
     stroke(1);
     strokeWeight(3);

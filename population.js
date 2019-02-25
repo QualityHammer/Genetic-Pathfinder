@@ -1,4 +1,4 @@
-var stepSize = 25;
+var stepSize = 20;
 var incrementFreq = 3;
 
 class Population {
@@ -48,12 +48,14 @@ class Population {
   // checks every member of the population for blockade intersections
   checkBounds(blocks, swings) {
     for (let s of this.pop) {
+      // check wall intersections
       for (let block of blocks) {
         if (block.checkInter(s)) {
           s.dead = true;
           s.setStep(this.step);
         }
       }
+      // check swing intersections
       for (let swing of swings) {
         if (swing.checkInter(s)) {
           s.dead = true;
@@ -73,7 +75,7 @@ class Population {
     }
   }
 
-  // gets best fitness value
+  // gets best fitness value and returns the best searcher
   getBest() {
     var top = 0;
     let best;
@@ -94,10 +96,12 @@ class Population {
       }
       this.step += 1;
     } else {
+      // if the lifespan has ended, make a new generation
       this.step = 0;
       this.calcFitness();
       this.selection();
       this.newGeneration();
+      // reset swings position and velocity
       for (let swing of swings) {
         swing.reset();
       }
@@ -106,14 +110,17 @@ class Population {
 
   // creates a new generation using cloning and mutation
   newGeneration() {
+    // increases the step size every certain amount of genertaions
     if (this.generations % incrementFreq == 0 && !this.limitSteps) {
       this.maxStep += stepSize;
     }
+    // clones the best one into the new generation
     let best = new Searcher(this.start, this.maxStep);
     best.best = true;
     let brain = this.getBest().brain;
     best.setBrain(brain, this.mRate);
     this.pop[this.size - 1] = best;
+    // generation creation
     for (var i = 0; i < this.size - 1; i++) {
       // gets a random DNA from the pool
       var index = floor(random(this.pool.length));
@@ -150,12 +157,6 @@ class Population {
     this.pool.length = 0;
     // gets the max fitness value
     var maxFit = this.getBest().fitness;
-    // var maxFit = 0;
-    // for (let s of this.pop) {
-    //   if (s.fitness > maxFit) {
-    //     maxFit = s.fitness;
-    //   }
-    // }
     // normalize fitness and add to pool
     for (let s of this.pop) {
       var fit = s.fitness / maxFit;

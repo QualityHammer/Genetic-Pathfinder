@@ -1,12 +1,17 @@
 let population, target, start;
+// list of all walls and swings
 let blocks = [];
 let swings = [];
+// editor selectors
 var x1 = null;
 var y1 = null;
 var rd = null;
 var ballDirect = null;
+// html elements
 var genP, stepP, startB, changeB, muteI, popP, popBup, popBdown;
+// selected obstacle
 var obst = 'Wall';
+// if genetic algorithm is running
 var go = false;
 
 
@@ -36,7 +41,7 @@ function mutationChange() {
 }
 
 
-// changes the created obstacle
+// changes the selected obstacle in editor
 function changeObstacle() {
   if (obst == 'Wall') {
     obst = 'Swing';
@@ -112,7 +117,7 @@ function draw() {
     }
     swing.show();
   }
-  // shows temp outline of the object about to be created
+  // shows temporary outline of the object about to be created
   if (x1 && y1) {
     fill(100, 255, 100);
     if (obst === 'Wall') {
@@ -145,6 +150,7 @@ function draw() {
   stepP.html('Lifespan: ' + population.maxStep);
 }
 
+// editor mousePressed
 function mousePressed() {
   if (mouseX < width && mouseX > 0 && mouseY < height && mouseY > 0) {
     if (!x1 && !y1 && !go) {

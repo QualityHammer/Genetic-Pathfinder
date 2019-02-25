@@ -28,7 +28,7 @@ class DNA {
     }
   }
 
-  // returns a list of
+  // returns a list of random vectors between -1 and 1
   randomizeGenes() {
     var g = [];
     for (var i = 0; i < this.len; i++) {

@@ -1,5 +1,6 @@
 class Rectangle {
   constructor(x1, y1, x2, y2) {
+    // position fixing
     if (x1 < x2) {
       this.left = x1;
       this.right = x2;
@@ -21,6 +22,7 @@ class Rectangle {
     return ((s.pos.x < this.right && s.pos.x > this.left && s.pos.y > this.top && s.pos.y < this.bottom) && !s.goal);
   }
 
+  // shows box
   show() {
     noStroke();
     fill(255, 0, 0);
