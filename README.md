@@ -1,4 +1,4 @@
-# Simple-Pathfinder
+# Genetic Pathfinder
 A genetic algorithm pathfinder in Javascript. Inspired by similar projects by CodingTrain and CodeBullet.  
   
 # Overview
