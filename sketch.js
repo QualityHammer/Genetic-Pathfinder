@@ -8,7 +8,7 @@ var y1 = null;
 var rd = null;
 var ballDirect = null;
 // html elements
-var genP, stepP, startB, changeB, muteI, popP, popBup, popBdown;
+var genP, stepP, startB, changeB, muteI, popP, popBup, popBdown, debugB;
 // selected obstacle
 var obst = 'Wall';
 // if genetic algorithm is running
@@ -20,6 +20,27 @@ var go = false;
 function startPop() {
   go = true;
   population.newPop();
+}
+
+
+// console logs a list of all objects in the map
+function debugMap() {
+  console.log(blocks);
+  console.log(swings);
+  console.log(start);
+  console.log(target);
+}
+
+
+// loads the easy sample map
+function loadEasy() {
+  let ez = new Easy();
+  blocks.length = 0;
+  swings.length = 0;
+  blocks = ez.getBlocks();
+  swings = ez.getSwings();
+  target.pos.set(ez.getTarget());
+  start.set(ez.getStart());
 }
 
 
@@ -89,6 +110,8 @@ function setup() {
   // info
   genP = createP('Generation: ');
   stepP = createP('Lifespan: ');
+  debugB = createButton("Load Sample Level");
+  debugB.mousePressed(loadEasy);
 }
 
 function draw() {
