@@ -41,7 +41,7 @@ class Swinger {
     this.pos.add(this.vel);
     if (this.pos.x + this.r > width || this.pos.x - this.r < 0) {
       this.vel.set(-this.vel.x, this.vel.y);
-    } else if (this.pos.y + this.r > width || this.pos.y - this.r < 0) {
+    } else if (this.pos.y + this.r > height || this.pos.y - this.r < 0) {
       this.vel.set(this.vel.x, -this.vel.y);
     }
   }
